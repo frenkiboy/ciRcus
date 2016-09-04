@@ -94,8 +94,8 @@ setMethod("summarizeCircs",signature("data.frame"),
             # -------------------------------------- #
             coldata.cnams = c('sample','filename')
             if(!all(coldata.cnams %in% colnames(colData)))
-               stop(paste(setdiff(coldata.cnams, colnames(colData),
-                            'is missing from colData')))
+               stop(paste(setdiff(coldata.cnams, colnames(colData)),
+                            'is missing from colData'))
 
             # -------------------------------------- #
             circ.files = as.character(colData$filename)
