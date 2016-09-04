@@ -71,7 +71,7 @@ loadAnnotation <- function(txdb.file) {
 #' @export
 setGeneric("annotateCircs",
            function(se,
-                    annot.list,
+                    annot.list=NULL,
                     assembly = c("hg19", "hg38", "mm10", "rn5", "dm6"),
                     fixCoordIndexing=TRUE,
                     ...)
@@ -81,6 +81,13 @@ setGeneric("annotateCircs",
 #' @usage  \\S4method{annotateCircs}{character}(colData, annot.list, assembly, fixCoordIndexing, ...)
 setMethod("annotateCircs", signature("RangedSummarizedExperiment"),
           function(se, annot.list, assembly = c("hg19", "hg38", "mm10", "rn5", "dm6"), fixCoordIndexing = TRUE, ...) {
+
+
+            if(is.null(annot.list))
+                stop('annotation list is not supplied')
+
+            if(!all(sapply(annot.list, class) %in% c('GRanges','GRangesList')))
+                stop('all elements of annot.list need to be GRanges or GRangesList objects')
 
             if (fixCoordIndexing == TRUE) {
               coordfix <- testCoordinateIndexing(rowRanges(se), annot.list$gene.feats$cds)
