@@ -12,13 +12,15 @@ output:
 
 # Introduction
 
-ciRcus is a package for easy summarization and exploration of circ RNAs detected
-in multiple experiments.
+ciRcus is a package for easy summarization, exploration, and annotation of 
+circ RNAs detected in multiple experiments.
 
 
 # Installation
 
 # Circ RNA detection
+
+
 
 # Summarize detected Circ RNAs
 
@@ -26,7 +28,7 @@ in multiple experiments.
 library(ciRcus)
 ```
 
-The main summarization function in \code{ciRcus} is the  \code{summarizeCircs} function.
+The central function in \code{ciRcus} is the  \code{summarizeCircs} function.
 The function takes as input a data.frame which contains minimally 2 columns:
 1. sample - sample designation for each file
 2. filename - a path to the detected Circ RNAs.
@@ -34,35 +36,31 @@ The function takes as input a data.frame which contains minimally 2 columns:
 Alternatively, the user can specify supply to the function just the paths
 to the files, and the coldata will be constructed automatically.
 
+Firstly, we load the files containing find circ output
 ```{r Load_Data, eval=FALSE, echo=TRUE}
-```
-
-
-
-```{r Summarize_Circs, eval=FALSE, echo=TRUE}
-
 circ.files = list.files(system.file('extdata', package='ciRcus'),
                           pattern='sites.bed',
                           full.names=TRUE)
 circ.files = circ.files[!grepl('Sy5y', circ.files)]
+```
 
+Then we merge the resulting circ RNAs into single single set of ranges.
+```{r Summarize_Circs, eval=FALSE, echo=TRUE}
 
-coldata = data.frame(sample = sub('.bed','',basename(circ.files)), 
-                     file=circ.files)
+circs = summarizeCircs(circ.files, suffix='_rep.+')
 
-circs = summarizeCircs(coldata)
-
-circs
+colData(circs)
 
 ```
 
 # Annotate Circs
 ```{r Annotate_Circs, eval=FALSE, echo=TRUE}
+annot.file = system.file('extdata/hsa_ens75_minimal.sqlite', package='ciRcus')
+annot.list = suppressMessages(loadAnnotation(annot.file))
 
+circs = annotateCircs(circs, annot.list)
 
-circs = AnnotatateCircs(circs)
-
-circs
+rowRanges(circs)
 
 ```
 
@@ -75,7 +73,7 @@ circs
 
 ## Circ statistics
 ```{r annotPie, eval=FALSE, echo=TRUE}
-histogram(circs)
+annotPie(circs)
 ```
 
 
@@ -85,5 +83,23 @@ histogram(circs)
 
 
 # Access to CircBase
+
+
+# Constructing custom annotation
+
+To construct a custom annotation package use the \code{gtf2sqlite} function.
+The file downloads the annotation for the corresponding genome from Bioconductor
+annotation hub and saves it for future use.
+Curretly supported genome assemblies are: hg19,hg38,mm10,rn5,dm6
+
+```{r histogram, eval=FALSE, echo=TRUE}
+gtf2sqlite(assembly = "hg19", db.file="~/human_hg19_ens75_txdb.sqlite")
+```
+
+To load the annotation do the following:
+```{r histogram, eval=FALSE, echo=TRUE}
+annot.list = loadAnnotation(assembly = "hg19", db.file="~/human_hg19_ens75_txdb.sqlite")
+```
+
 
 
