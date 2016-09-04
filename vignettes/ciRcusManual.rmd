@@ -18,7 +18,17 @@ circ RNAs detected in multiple experiments.
 
 # Installation
 
+The package can be currently installed from BIMSBbioinfo github page:
+```{r install_ciRcus, eval=FALSE, echo=TRUE}
+install.packages('devltools')
+devtools::install_github('BIMSBbioinfo/ciRcus')
+```
+
+
 # Circ RNA detection
+
+Currently there are multiple tools which enable detection of circular RNAs
+from RNAseq data.
 
 
 
@@ -52,6 +62,21 @@ circs = summarizeCircs(circ.files, suffix='_rep.+')
 colData(circs)
 
 ```
+
+The SummarizedExperiment object contains three matrices:
+1. circ: backsplicing reads
+2. linear.start: linearly spliced reads over the circ start 
+3. linear.start: linearly spliced reads over the circ end
+
+To access the counts do the following:
+```{r Assays_Circs, eval=FALSE, echo=TRUE}
+
+expr = assays(circs)
+
+expr[[1]]
+```
+
+
 
 # Annotate Circs
 ```{r Annotate_Circs, eval=FALSE, echo=TRUE}
@@ -92,12 +117,12 @@ The file downloads the annotation for the corresponding genome from Bioconductor
 annotation hub and saves it for future use.
 Curretly supported genome assemblies are: hg19,hg38,mm10,rn5,dm6
 
-```{r histogram, eval=FALSE, echo=TRUE}
+```{r get_annotation, eval=FALSE, echo=TRUE}
 gtf2sqlite(assembly = "hg19", db.file="~/human_hg19_ens75_txdb.sqlite")
 ```
 
 To load the annotation do the following:
-```{r histogram, eval=FALSE, echo=TRUE}
+```{r load_annotation, eval=FALSE, echo=TRUE}
 annot.list = loadAnnotation(assembly = "hg19", db.file="~/human_hg19_ens75_txdb.sqlite")
 ```
 
