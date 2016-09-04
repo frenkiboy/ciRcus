@@ -60,6 +60,8 @@ readCircs <- function(file, subs="all", qualfilter=TRUE, keepCols=1:6, ...) {
 #' @param keepCols a vector of column numbers return
 #' @param colData a \code{DataFrame} object that contains the experiment data. It has
 #'        to have the same number of rows as the number of files
+#' @param suffix a regex which determines how sample names are constructed from file names
+#'
 #'
 #' @return returns a \code{SummarizedExperiment}
 #'
@@ -78,6 +80,7 @@ setGeneric("summarizeCircs",
                     subs = 'all',
                     qualfilter=TRUE,
                     keepCols=1:6,
+                    suffix='',
                     ...)
              standardGeneric("summarizeCircs"))
 
@@ -157,12 +160,12 @@ setMethod("summarizeCircs",signature("data.frame"),
 #' @rdname summarizeCircs-methods
 #' @usage  \\S4method{summarizeCircs}{character}(files, keep.linear, wobble, subs, qualfilter, keepCols,colData)
 setMethod("summarizeCircs",signature("character"),
-          function(colData, keep.linear, wobble, subs, qualfilter,keepCols){
+          function(colData, keep.linear, wobble, subs, qualfilter,keepCols, suffix){
 
 
 
             message('Constructing colData...')
-            colData = data.frame(sample = sub('.candidates.bed','',basename(colData)),
+            colData = data.frame(sample = sub(suffix,'',basename(colData)),
                                 filename=colData,
                                 stringsAsFactors=FALSE)
 
